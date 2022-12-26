@@ -1,39 +1,34 @@
 //const { createServer } = require('vite')
 const { marked } = require('marked')
+const fs = require('fs')
+const path = require('path')
+const sanitizeHtml = require('sanitize-html')
 const express = require('express')
 const app = express()
 const PORT = process.env.PORT || 3000
-
 const socketIo = require('socket.io')
 const server = require('http').createServer(app)
 const io = socketIo(server)
-
-// borrar despues
 const cors = require('cors')
+const routeMain = require('./routes/routeMain')
 
-const path = require('path')
 const publicPath = path.join(__dirname, '..', 'dist')
+const publicPath_2 = path.join(__dirname, 'aseets')
 
 app.use(express.static(publicPath))
-
-// código markdown para convertir a html
-const routeMain = require('./routes/routeMain')
-const markdownString = 'TextMK'
-const htmlString = marked(markdownString)
-console.log(htmlString) // Imprime: <h1>Mi título en Markdown</h1>
+app.use(express.static(publicPath_2))
 
 app.use(
   cors({
-    origin: '*',//['http://127.0.0.1:5173/', 'http://localhost:5173/'],
+    origin: ['http://127.0.0.1:5173/', 'http://localhost:5173/'],
   }),
 )
 
 app.use('/', routeMain)
 
-
-
 io.on('connection', (socket) => {
-  let limit = 0
+  let limit = 0,
+    typeStl = 3
   console.log('a user connected in this server')
 
   socket.on('client on', (msg) => {
@@ -41,9 +36,106 @@ io.on('connection', (socket) => {
     if (msg == 'true' && limit == 0) {
       limit++
 
+      const TextHTML = fs.readFileSync(
+        path.join(__dirname, 'assets', 'html-default.txt'),
+        'utf8',
+      )
+      const TextMK = fs.readFileSync(
+        path.join(__dirname, 'assets', 'markdown-default.txt'),
+        'utf8',
+      )
+      const textCss = fs.readFileSync(
+        path.join(__dirname, 'assets', `css-${typeStl}.txt`),
+        'utf8',
+      )
+
       socket.emit('text markdown last save', TextMK)
-      socket.emit('text html last save', TextHTML)
+      socket.emit('text html last save', `${textCss} \n ${TextHTML}`)
     }
+  })
+
+  socket.on('text markdown', (markdownText) => {
+    // código markdown para convertir a html
+    const htmlString = marked(markdownText)
+
+    // Limpiar el código HTML utilizando la función sanitize de la librería
+    const cleanHtml = sanitizeHtml(htmlString, {
+      allowedTags: [
+        'p',
+        'strong',
+        'em',
+        'img',
+        'table',
+        'th',
+        'td',
+        'tr',
+        'ul',
+        'ol',
+        'li',
+        'pre',
+        'code',
+        'blockquote',
+        'a',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'a',
+        'input',
+        'button',
+        'hr',
+        'small',
+        'select',
+        'textarea',
+        'option',
+        'label',
+        'sup',
+        'span',
+        'br',
+      ],
+      // Permitir solo el atributo "class" en las etiquetas <p> y <strong>
+      allowedAttributes: {
+        p: ['class', 'style'],
+        strong: ['class', 'style'],
+        em: ['class', 'style'],
+        img: ['class', 'style', 'src', 'alt'],
+        table: ['class', 'style'],
+        th: ['class', 'style'],
+        td: ['class', 'style'],
+        tr: ['class', 'style'],
+        ul: ['class', 'style'],
+        ol: ['class', 'style'],
+        li: ['class', 'style'],
+        pre: ['class', 'style'],
+        code: ['class', 'style'],
+        blockquote: ['class', 'style'],
+        a: ['class', 'style', 'href', 'target'],
+        h1: ['class', 'style'],
+        h2: ['class', 'style'],
+        h3: ['class', 'style'],
+        h4: ['class', 'style'],
+        h5: ['class', 'style'],
+        h6: ['class', 'style'],
+        input: ['class', 'style', 'type', 'name', 'value', 'checked'],
+        button: ['class', 'style', 'type', 'name', 'value'],
+        hr: ['class', 'style'],
+        small: ['class', 'style'],
+        select: ['class', 'style', 'name', 'value'],
+        textarea: ['class', 'style', 'name', 'value'],
+        option: ['class', 'style', 'value'],
+        label: ['class', 'style', 'for'],
+        sup: ['class', 'style'],
+        span: ['class', 'style'],
+      },
+    })
+
+    const textCss = fs.readFileSync(
+      path.join(__dirname, 'assets', `css-${typeStl}.txt`),
+      'utf8',
+    )
+    socket.emit('text html', `${textCss} <br> ${cleanHtml}`)
   })
 
   socket.on('client off', (type) => {
@@ -80,37 +172,3 @@ function MyComponent() {
 
 
 */
-
-const TextHTML = `<h1>Bienvenido al chat</h1>`
-
-const TextMK =
-  `# Bienvenido al chat
-
-  Escribe lo que quieras con el formato que **quieras** por ejemplo:
-  
-  - Una lista de tareas
-    - Esta puede tener mas opciones como **_sub listas_**
-    - [ ] Listas de tipo **_check_**
-          O también puedes ordenar pendientes con las listas ordenadas; ejemplo:
-  
-  1. Tarea 1
-  1. Tarea 2
-  
-  También puedes citar a alguien
-  
-  > Cita de juan peres "el fin de todo es el limite"
-  
-  Aunque si quieres hacer una pagina informativa, también puedes hacer links dinámicos
-  
-  [aquí_escribe_cualquier_texto](https://images.unsplash.com/photo-1593288942460-e321b92a6cde?ixlib=rb-4.0.3)
-  
-  Aunque si quieres también puedes ingresar la imagen aquí mismo
-  
-  ![texto_si_la_imagen_no_carga](https://images.unsplash.com/photo-1593288942460-e321b92a6cde)
-  y si eres programador también puedes usar la función de mostrar código de una forma muy sencilla como por ejemplo
-  ` +
-  "\n```js\nconsole.log('hola mundo')\n```\n" +
-  `
-  
-  y todo esto lo puedes exportar a un archivo html con un solo click puedes abrirlo en tu navegador y compartirlo con tus amigos
-  `

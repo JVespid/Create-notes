@@ -13,7 +13,7 @@ function App({ socket }) {
   const { pages } = pageMain;
 
   const navVisible = {
-    display: visible ? "inline-block" : "none",
+    display: visible ? "flex" : "none",
   };
   function connectSocket() {
     console.log("hola");

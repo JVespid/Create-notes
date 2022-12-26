@@ -4,21 +4,28 @@ import AreaEditable from "../../components/areaEditable";
 import GlobalState from "./../../context/global/globalState";
 
 import { io } from "socket.io-client";
-/* const socket = io("http://localhost:3000/", {
+const socket = io("http://localhost:3000/", {
   transports: ["websocket"],
   origin: "*",
-}); */
+});
 
-const socket = io();
+//const socket = io();
+
 const Notes = ({ setVisible }) => {
+  const [textHtml, setTextHtml] = useState("<h1> bienvenido al chat </h1>");
+
   React.useEffect(() => {
     setVisible(true);
     try {
       socket.connect();
+      socket.on("text html", html => {
+        setTextHtml(html);
+      });
     } catch (error) {}
 
     return () => {
       try {
+        socket.removeAllListeners("text markdown last save");
         socket.disconnect();
       } catch (error) {}
     };
@@ -27,7 +34,7 @@ const Notes = ({ setVisible }) => {
   return (
     <GlobalState>
       <Header />
-      <Main />
+      <Main textHtml={textHtml} />
     </GlobalState>
   );
 };
@@ -49,7 +56,7 @@ const Header = () => {
   );
 };
 
-const Main = () => {
+const Main = ({ textHtml }) => {
   const [preValue, setPrevalue] = useState(
     localStorage.getItem("textMarkdown")
   );
@@ -59,11 +66,19 @@ const Main = () => {
   }, [localStorage.getItem("textMarkdown")]);
 
   return (
-    <main className="main">
-      <section className="groups-and-notes"> </section>
-
+    <main className="main-notes">
       <section className="edit">
         <AreaEditable socket={socket} preValue={preValue} />
+      </section>
+      <div className="btn-move"></div>
+      <section className="content-html1">
+        <div className="temp"></div>
+        <div className="html">
+          <div
+            className="body"
+            dangerouslySetInnerHTML={{ __html: textHtml }}
+          ></div>
+        </div>
       </section>
     </main>
   );

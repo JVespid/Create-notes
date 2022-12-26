@@ -1,0 +1,54 @@
+<h1 id="bienvenido-al-chat">Bienvenido al chat</h1>
+<p>
+  Escribe lo que quieras con el formato que <strong>quieras</strong> por
+  ejemplo:
+</p>
+<ul>
+  <li>
+    Una lista de tareas
+    <ul>
+      <li>
+        Esta puede tener mas opciones como <strong><em>sub listas</em></strong>
+      </li>
+      <li>
+        <input disabled="" type="checkbox" /> Listas de tipo
+        <strong><em>check</em></strong>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>o también puedes ordenar pendientes con las listas ordenadas; ejemplo:</p>
+<ol>
+  <li>Tarea 1</li>
+  <li>Tarea 2</li>
+</ol>
+<p>También puedes citar a alguien</p>
+<blockquote>
+  <p>Cita de juan peres &quot;el fin de todo es el limite&quot;</p>
+</blockquote>
+<p>
+  Aunque si quieres hacer una pagina informativa, también puedes hacer links
+  dinámicos
+</p>
+<p>
+  <a
+    href="https://images.unsplash.com/photo-1593288942460-e321b92a6cde?ixlib=rb-4.0.3"
+    >aquí_escribe_cualquier_texto</a
+  >
+</p>
+<p>Aunque si quieres también puedes ingresar la imagen aquí mismo</p>
+<p>
+  <img
+    src="https://images.unsplash.com/photo-1593288942460-e321b92a6cde"
+    alt="texto_si_la_imagen_no_carga"
+  />
+  y si eres programador también puedes usar la función de mostrar código de una
+  forma muy sencilla como por ejemplo
+</p>
+<pre><code class="language-js">console.log(&#39;hola mundo&#39;)
+</code></pre>
+nameId
+<p>
+  y todo esto lo puedes exportar a un archivo html con un solo click puedes
+  abrirlo en tu navegador y compartirlo con tus amigos
+</p>

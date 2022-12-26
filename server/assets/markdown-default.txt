@@ -1,0 +1,33 @@
+# Bienvenido al chat
+
+Escribe lo que quieras con el formato que **quieras** por ejemplo:
+  
+- Una lista de tareas
+  - Esta puede tener mas opciones como **_sub listas_**
+  - [ ] Listas de tipo ***check***
+
+O también puedes ordenar pendientes con las listas ordenadas; ejemplo:
+
+1. Tarea 1
+1. Tarea 2
+
+También puedes citar a alguien
+
+> Cita de juan peres "el fin de todo es el limite"
+  
+Aunque si quieres hacer una pagina informativa, también puedes hacer links dinámicos
+
+[aquí_escribe_cualquier_texto](https://images.unsplash.com/photo-1593288942460-e321b92a6cde?ixlib=rb-4.0.3)
+
+Aunque si quieres también puedes ingresar la imagen aquí mismo
+
+![texto_si_la_imagen_no_carga](https://images.unsplash.com/photo-1593288942460-e321b92a6cde)
+y si eres programador también puedes usar la función de mostrar código de una forma muy sencilla como por ejemplo
+  
+```js
+console.log('hola mundo')
+```
+  
+  
+  y todo esto lo puedes exportar a un archivo html con un solo click puedes abrirlo en tu navegador y compartirlo con tus amigos
+  

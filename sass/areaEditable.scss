@@ -1,11 +1,21 @@
 .tools {
+  * {
+    user-select: none;
+  }
+
   width: 100%;
-  height: 40px;
+  min-height: 40px;
+  height: auto;
 
   display: Flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+
   gap: 30px;
+  margin: 10px;
 
   overflow: visible;
+
   .block-controls {
     position: fixed;
     top: 0;
@@ -16,16 +26,18 @@
     z-index: 225;
     display: none;
   }
+
   .block-controls-visible {
     display: inline-block;
   }
 
   .content-btn {
     display: flex;
+    cursor: pointer;
 
     border: 1px solid black;
-    width: 60px;
-    height: 100%;
+    width: max-content;
+    height: 40px;
 
     .toll-main {
       min-width: 30px;
@@ -37,14 +49,8 @@
       min-height: 100%;
       z-index: 200;
       min-width: max-content;
-      background-color: white;
+
       border: 1px solid black;
-      &:focus {
-        border: 1px solid red;
-      }
-      * {
-        user-select: none;
-      }
 
       summary {
         width: 100%;
@@ -56,16 +62,28 @@
         width: max-content;
         background-color: white;
         margin: 10px, auto;
-        width: 100%;
-        
+
         border: 1px solid black;
         padding: 5px;
-        cursor: pointer;
-
       }
     }
-    .open{
+    .open {
       z-index: 250;
     }
+  }
+}
+
+.text-area {
+  width: 100%;
+  min-height: 90vh;
+  height: auto;
+
+  textarea {
+    display: inline-block;
+    outline: none;
+    resize: none;
+
+    width: 100%;
+    height: 100%;
   }
 }

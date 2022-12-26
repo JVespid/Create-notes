@@ -3,27 +3,76 @@ import { globalContext } from "../context/global/context";
 import Error from "./error";
 import "../sass/areaEditable.scss";
 
-// manejando el historial de cambios para hacerlo perdurable
-const historialArray =
-  localStorage.getItem("historialArray") &&
-  localStorage.getItem("historialCount")
-    ? JSON.parse(localStorage.getItem("historialArray"))
-    : [];
+let timeToConection = false;
+let timeoutId;
+const resetTimer = async socket => {
+  const myPromise = new Promise((resolve, reject) => {
+    let reult;
+    if (timeToConection) {
+      socket.connect();
+      console.log("conexión restablecida");
+      timeToConection = false;
+    }
 
-var historialCount =
-  localStorage.getItem("historialArray") &&
-  localStorage.getItem("historialCount")
-    ? parseInt(localStorage.getItem("historialCount")) - 1
-    : -1;
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function () {
+      console.log("tiempo de espera para uso ha terminado");
+      socket.disconnect();
+      timeToConection = true;
+    }, 10000);
+  });
 
-console.log(historialArray);
-historialArray.length = 16;
+  console.log(await myPromise);
+};
+const historial = Count => {
+  let temp = [];
+  /* 
+  if (data) {
+    temp = JSON.parse(localStorage.getItem("historialArray"));
+    Count += 1;
+    temp[Count] = data;
+
+    localStorage.setItem("historialArray", JSON.stringify(temp));
+    localStorage.setItem("historialCount", Count);
+    temp.length = 16;
+    return { array: temp[Count], count: Count };
+  } */
+
+  if (Count && Count > 0) {
+    Count -= 1;
+    temp =
+      localStorage.getItem("historialArray") &&
+      localStorage.getItem("historialCount")
+        ? JSON.parse(localStorage.getItem("historialArray"))
+        : [];
+    temp.length = 16;
+    localStorage.setItem("historialCount", Count);
+    return { array: temp[Count], count: Count };
+  }
+
+  temp =
+    localStorage.getItem("historialArray") &&
+    localStorage.getItem("historialCount")
+      ? JSON.parse(localStorage.getItem("historialArray"))
+      : [];
+
+  let count =
+    localStorage.getItem("historialArray") &&
+    parseInt(localStorage.getItem("historialCount")) >= 0
+      ? parseInt(localStorage.getItem("historialCount"))
+      : -1;
+
+  return { array: temp, count };
+};
+
+let historialCount = historial().count;
 
 const AreaEditable = ({ preValue, socket }) => {
   const textAreaRef = useRef(null);
   const [textArea, setTextArea] = React.useState(false);
 
-  preValue = historialCount !== -1 ? historialArray[historialCount] : preValue;
+  const { array, count } = historial();
+  preValue = count != -1 && array[count] ? array[count] : preValue;
 
   useEffect(() => {
     // esta if contiene el código que se ejecuta cuando se carga la pagina solo una vez
@@ -41,11 +90,15 @@ const AreaEditable = ({ preValue, socket }) => {
         });
       }
     }
+    resetTimer(socket);
 
     textAreaRef.current.addEventListener("keydown", keyDown);
     return () => {
       //socket.removeListener("client on", "true");
       // cuando se pasa de pagina se elimina la referencia primero y por eso no se puede eliminar el evento
+      resetTimer(socket);
+      clearTimeout(timeoutId);
+
       try {
         textAreaRef.current.removeEventListener("keydown", keyDown);
         // no se puede eliminar el evento y eso esta bien0, pues cuando pasa solo se necesita que no marque error
@@ -128,17 +181,11 @@ const AreaEditable = ({ preValue, socket }) => {
       if (historialCount > 0) {
         const start = e.target.selectionStart;
         const end = e.target.selectionEnd;
-        historialCount--;
-        returnToLine(
-          socket,
-          start,
-          end,
-          historialArray[historialCount],
-          e,
-          1,
-          false,
-          false
-        );
+        const { array, count } = historial(historialCount);
+        historialCount = count;
+        console.log(array, count, historialCount);
+
+        returnToLine(socket, start, end, array, e, 1, false, false);
       }
     }
   }
@@ -197,10 +244,13 @@ const BtnToll = ({ value, link, data, actionMain, subAction, socket }) => {
 
   return (
     <>
-      <div
-        className={`block-controls ${classControls}`}
-        onClick={() => details(2)}
-      ></div>
+      {data && subAction ? (
+        <div
+          className={`block-controls ${classControls}`}
+          onClick={() => details(2)}
+        ></div>
+      ) : null}
+
       <div className="content-btn">
         {actionMain ? (
           <>
@@ -454,6 +504,13 @@ const returnToLine = (socket, start, end, value, e, cantS, cantE, saveInfo) => {
 
 //guarda todos los valores en la variable global historialArray para su uso en el comando
 const configTollsGlobals = (e, socket) => {
+  const { array, count } = historial();
+  resetTimer(socket);
+
+  let historialCount = count,
+    historialArray = array;
+  console.log(historialArray, historialCount);
+
   const type = e.target ? "target" : "current";
 
   if (historialCount < historialArray.length - 1) historialCount++;
@@ -462,7 +519,7 @@ const configTollsGlobals = (e, socket) => {
       historialArray[i] = historialArray[i + 1];
     }
   }
-  
+
   historialArray[historialCount] = e[`${type}`].value;
   localStorage.setItem("textMarkdown", e[`${type}`].value);
   localStorage.setItem("historialArray", JSON.stringify(historialArray));

@@ -3,22 +3,23 @@ import { globalContext } from "../context/global/context";
 import Error from "./error";
 import "../sass/areaEditable.scss";
 
-let timeToConection = false;
+let timeToConnection = false;
 let timeoutId;
+
 const resetTimer = async socket => {
   const myPromise = new Promise((resolve, reject) => {
-    let reult;
-    if (timeToConection) {
+    if (timeToConnection) {
       socket.connect();
-      console.log("conexión restablecida");
-      timeToConection = false;
+      timeToConnection = false;
+      console.log("conectado");
     }
 
     clearTimeout(timeoutId);
+    socket.emit("reconnected", "true");
     timeoutId = setTimeout(function () {
-      console.log("tiempo de espera para uso ha terminado");
       socket.disconnect();
-      timeToConection = true;
+      console.log("desconectado");
+      timeToConnection = true;
     }, 10000);
   });
 
@@ -32,10 +33,10 @@ const historial = Count => {
     Count += 1;
     temp[Count] = data;
 
-    localStorage.setItem("historialArray", JSON.stringify(temp));
-    localStorage.setItem("historialCount", Count);
+    localStorage.setItem("historialArray",JSON.stringify(temp));
+    localStorage.setItem("historialCount",Count);
     temp.length = 16;
-    return { array: temp[Count], count: Count };
+    return { array: temp[Count],count: Count };
   } */
 
   if (Count && Count > 0) {
@@ -64,18 +65,15 @@ const historial = Count => {
 
   return { array: temp, count };
 };
-
 let historialCount = historial().count;
 
-const AreaEditable = ({ preValue, socket }) => {
+const AreaEditable = ({ preValue, socket, change }) => {
   const textAreaRef = useRef(null);
   const [textArea, setTextArea] = React.useState(false);
-
   const { array, count } = historial();
   preValue = count != -1 && array[count] ? array[count] : preValue;
 
   useEffect(() => {
-    // esta if contiene el código que se ejecuta cuando se carga la pagina solo una vez
     if (textAreaRef.current && !textArea) {
       setTextArea(true);
 
@@ -88,26 +86,34 @@ const AreaEditable = ({ preValue, socket }) => {
             textAreaRef.current.value = data;
           } catch (error) {}
         });
+        socket.on("change info", data => {
+          console.log(data);
+          socket.emit("text markdown", textAreaRef.current.value);
+        });
       }
     }
     resetTimer(socket);
-
     textAreaRef.current.addEventListener("keydown", keyDown);
     return () => {
-      //socket.removeListener("client on", "true");
+      //socket.removeListener("client on","true");
       // cuando se pasa de pagina se elimina la referencia primero y por eso no se puede eliminar el evento
       resetTimer(socket);
       clearTimeout(timeoutId);
 
       try {
         textAreaRef.current.removeEventListener("keydown", keyDown);
-        // no se puede eliminar el evento y eso esta bien0, pues cuando pasa solo se necesita que no marque error
+        // no se puede eliminar el evento y eso esta bien0,pues cuando pasa solo se necesita que no marque error
       } catch (error) {
         socket.removeAllListeners("text markdown last save");
+        socket.removeAllListeners("change info");
         socket.emit("client off", "true");
       }
     };
   }, [textAreaRef.current]);
+
+  React.useEffect(() => {
+    resetTimer(socket);
+  }, [change]);
 
   function keyDown(e) {
     // código para programar el tabulador
@@ -169,8 +175,7 @@ const AreaEditable = ({ preValue, socket }) => {
         }
       }
 
-      console.log(spaceTotal.length);
-      //let spaceTotal = startLineInEnter(start, value);
+      //let spaceTotal = startLineInEnter(start,value);
       spaceTotal = spaceTotal ? spaceTotal : "";
       value.splice(start, 0, "\n" + spaceTotal);
       returnToLine(socket, start, end, value, e, spaceTotal.length + 1);
@@ -183,7 +188,6 @@ const AreaEditable = ({ preValue, socket }) => {
         const end = e.target.selectionEnd;
         const { array, count } = historial(historialCount);
         historialCount = count;
-        console.log(array, count, historialCount);
 
         returnToLine(socket, start, end, array, e, 1, false, false);
       }
@@ -191,6 +195,7 @@ const AreaEditable = ({ preValue, socket }) => {
   }
 
   const keyPress = e => {
+    //socket.emit("text markdown", e.target.value);
     configTollsGlobals(e, socket);
   };
 
@@ -201,7 +206,7 @@ const AreaEditable = ({ preValue, socket }) => {
       ) : (
         <Error
           name="Error al cargar"
-          message="No se pudo cargar las herramientas de edición, pruebe recargando la pagina"
+          message="No se pudo cargar las herramientas de edición,pruebe recargando la pagina"
           type="error"
         />
       )}
@@ -344,7 +349,7 @@ const Tools = ({ textArea, socket }) => {
       value,
       textArea,
       (e.length + 1) * movementsStart,
-      (e.length + 1) * movements
+      (e.length + 1) * movements,
     );
   };
 
@@ -354,8 +359,8 @@ const Tools = ({ textArea, socket }) => {
     let value = textArea.current.value.split("");
 
     if (start !== end && e !== "```") {
-      //value.splice(start, 0, `> `);
-      //value.splice(end + 2, 0, ``);
+      //value.splice(start,0,`> `);
+      //value.splice(end + 2,0,``);
 
       value.splice(start, 0, `${e}`);
       value.splice(end + 1, 0, `${e}`);
@@ -364,7 +369,7 @@ const Tools = ({ textArea, socket }) => {
     }
 
     if (start == end && e !== "```") {
-      //value.splice(start, 0, `> `);
+      //value.splice(start,0,`> `);
       value.splice(start, 0, `${e} ${e}`);
       returnToLine(socket, start, end, value, textArea, e.length, e.length + 1);
       return;
@@ -386,7 +391,7 @@ const Tools = ({ textArea, socket }) => {
         value,
         textArea,
         e.length + 1,
-        e.length + 2
+        e.length + 2,
       );
       return;
     }
@@ -421,7 +426,7 @@ const Tools = ({ textArea, socket }) => {
         value,
         textArea,
         initial.length,
-        initial.length + description.length
+        initial.length + description.length,
       );
     }
   };
@@ -442,7 +447,7 @@ const Tools = ({ textArea, socket }) => {
     Links_TYPE_MAIN,
     Links_TYPE_MAIN,
   ];
-  // si no hay un componente secundario, rellenar el espacio con un null y solo si hay un componente principal
+  // si no hay un componente secundario,rellenar el espacio con un null y solo si hay un componente principal
   // este array tiene que estar en orden como en el contexto
   const subAction = [
     ListType_TYPE_MAIN,
@@ -498,6 +503,7 @@ const returnToLine = (socket, start, end, value, e, cantS, cantE, saveInfo) => {
   e[`${type}`].selectionStart = start + cantS;
   e[`${type}`].selectionEnd = end + cantE;
 
+  e[`${type}`].focus();
   if (saveInfo) configTollsGlobals(e, socket);
   e[`${type}`].focus();
 };
@@ -505,11 +511,9 @@ const returnToLine = (socket, start, end, value, e, cantS, cantE, saveInfo) => {
 //guarda todos los valores en la variable global historialArray para su uso en el comando
 const configTollsGlobals = (e, socket) => {
   const { array, count } = historial();
-  resetTimer(socket);
 
   let historialCount = count,
     historialArray = array;
-  console.log(historialArray, historialCount);
 
   const type = e.target ? "target" : "current";
 
@@ -520,9 +524,10 @@ const configTollsGlobals = (e, socket) => {
     }
   }
 
+  resetTimer(socket);
+  socket.emit("text markdown", e[`${type}`].value);
   historialArray[historialCount] = e[`${type}`].value;
   localStorage.setItem("textMarkdown", e[`${type}`].value);
   localStorage.setItem("historialArray", JSON.stringify(historialArray));
   localStorage.setItem("historialCount", historialCount);
-  socket.emit("text markdown", e[`${type}`].value);
 };

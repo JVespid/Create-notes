@@ -44,35 +44,64 @@ export default Notes;
 const Header = () => {
   return (
     <header className="header">
-      <div className="text">
-        <h2>Todo List </h2>
-        <h3> Descripción: </h3>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis
-          optio voluptatum repellendus voluptas nulla velit consectetur enim,
-        </p>
-      </div>
+      <div className="text"></div>
     </header>
   );
 };
 
 const Main = ({ textHtml }) => {
   const [preValue, setPrevalue] = useState(
-    localStorage.getItem("textMarkdown")
+    localStorage.getItem("textMarkdown"),
   );
+
+  const [change, setChange] = useState(false);
+
+  const refSelect = React.useRef(null);
 
   React.useEffect(() => {
     setPrevalue(localStorage.getItem("textMarkdown"));
   }, [localStorage.getItem("textMarkdown")]);
 
+  React.useEffect(() => {
+    try {
+      socket.on("data css", data => {
+        socket.emit("change types", { typeCss: refSelect.current.value });
+      });
+      return () => {
+        socket.removeAllListeners("data css");
+      };
+    } catch (error) {}
+  }, []);
+
+  const changeStyle = e => {
+    setChange(!change);
+    socket.emit("change css", {
+      type: e.target.value,
+      data: textHtml.split("</style> <br>")[1],
+    });
+    //alert(e.target.value)
+  };
+
   return (
     <main className="main-notes">
       <section className="edit">
-        <AreaEditable socket={socket} preValue={preValue} />
+        <AreaEditable socket={socket} preValue={preValue} change={change} />
       </section>
-      <div className="btn-move"></div>
-      <section className="content-html1">
-        <div className="temp"></div>
+
+      <section className="content-html1" id="html">
+        <div className="tool-html">
+          <select
+            name="type_css"
+            id="typeCss"
+            onChange={changeStyle}
+            ref={refSelect}
+          >
+            <option value="1">estilo 1</option>
+            <option value="2">estilo 2</option>
+            <option value="3">estilo 3</option>
+            <option value="4">estilo 4</option>
+          </select>
+        </div>
         <div className="html">
           <div
             className="body"

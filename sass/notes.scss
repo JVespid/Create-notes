@@ -1,50 +1,67 @@
 .main-notes {
-  width: 100%;
+  width: 95%;
   min-height: 95vh;
   height: auto;
-  background-color: red;
   display: flex;
-  flex-wrap: wrap;
+  //flex-direction: column;
   padding: 10px 0;
   overflow: hidden;
+  margin: auto;
+  gap:5px;
 
   .edit {
     display: flex;
-    flex-direction: column;
-    width: 70%;
+    flex-wrap: wrap;
+    width: 100%;
     min-height: 95vh;
     height: auto;
+    margin: auto;
   }
-
   .btn-move {
   }
 
   .content-html1 {
-    width: 30%;
-    min-height: 95vh;
+    width: 100%;
     height: auto;
-    max-height: 100%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
 
     &::-webkit-scrollbar {
       display: none;
     }
-    .temp {
-      min-height: 60px;
-      height: auto;
-    }
-
     .html {
+      background-color: rgba(30, 30, 30, 0.8);
       width: 100%;
       height: 90vh;
-      overflow: hidden;
-      
-      
+      overflow: scroll !important;
+
       .body {
-        overflow: scroll !important;
-        margin: 0;
+        margin: auto;
+        width: 100%;
+        min-height: 100%;
         &::-webkit-scrollbar {
           display: none;
         }
+      }
+    }
+
+    .tool-html {
+      background-color: rgba(30, 30, 30, 0.8);
+      width: 100%;
+      min-height: 40px;
+      height: auto;
+
+      display: Flex;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+
+      gap: 30px;
+      margin: 10px 0 10px 0;
+      padding: 20px;
+
+      select{
+        height: 40px;
       }
     }
   }

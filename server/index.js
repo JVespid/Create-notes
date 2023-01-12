@@ -18,7 +18,7 @@ const publicPath = path.join(__dirname, "..", "dist");
 //const publicPath_2 = path.join(__dirname, "assets");
 
 app.use(express.static(publicPath));
-app.use(express.static(publicPath_2));
+//app.use(express.static(publicPath_2));
 
 app.use(
   cors({

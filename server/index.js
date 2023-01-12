@@ -15,7 +15,7 @@ const io = socketIo(server);
 const routeMain = require("./routes/routeMain");
 
 const publicPath = path.join(__dirname, "..", "dist");
-const publicPath_2 = path.join(__dirname, "assets");
+//const publicPath_2 = path.join(__dirname, "assets");
 
 app.use(express.static(publicPath));
 app.use(express.static(publicPath_2));

@@ -1,19 +1,17 @@
 /* eliminando los estilos predeterminados del navegador  */
 @import url("https://fonts.googleapis.com/css2?family=La+Belle+Aurore&family=Poppins&family=Prompt:wght@100&display=swap");
-*,
+
+@import "modules/variables";
+@import "modules/mixin";
+
 #root,
 html,
 body {
-  margin: 0;
-  box-sizing: border-box;
-  width: auto;
-  height: auto;
-  font-family: "Poppins", sans-serif;
-  font-size: 100%;
+  @include min-value;
 }
 * {
-  padding: auto;
-  
+  font-family: "Poppins", sans-serif;
+  box-sizing: border-box;
 }
 
 #root,
@@ -41,11 +39,10 @@ h6 {
   font-size: 0.67em;
 }
 
-.style{
+.style {
   border: 1px solid black;
   display: block;
 
   width: 400px;
   height: 400px;
-
 }

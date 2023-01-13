@@ -33,7 +33,7 @@ io.on("connection", socket => {
     typeStl = 1;
 
   let textCss = fs.readFileSync(
-    path.join(__dirname, "assets", `css-${typeStl}.txt`),
+    path.join(__dirname, "assets", `css-1.txt`),
     "utf8",
   );
 
@@ -42,7 +42,6 @@ io.on("connection", socket => {
   socket.on("client on", msg => {
     if (msg == "true" && limit == 0) {
       limit++;
-
       const TextHTML = fs.readFileSync(
         path.join(__dirname, "assets", "html-default.txt"),
         "utf8",
@@ -52,46 +51,32 @@ io.on("connection", socket => {
         "utf8",
       );
 
-      socket.emit("text markdown last save", TextMK);
-      socket.emit("text html last save", `${textCss} \n ${TextHTML}`);
+      socket.emit("get text markdown", TextMK);
+      socket.emit("get text css", `${textCss}`);
+      socket.emit("get text html", `${TextHTML}`);
     }
   });
 
-  socket.on("text markdown", markdownText => {
+  socket.on("set text markdown", markdownText => {
     // código markdown para convertir a html
-    socket.emit("data css", "true");
     const htmlString = marked(markdownText);
     const htmlClean = cleanHtml(htmlString);
-    socket.emit("text html", `${textCss} <br> ${htmlClean}`);
+    socket.emit("get text html", `${htmlClean}`);
   });
 
-  socket.on("change css", ({ type, data }) => {
+
+  socket.on("change css", ({ type }) => {
     const { css, typeCss } = changeCss(type);
     textCss = css;
     typeStl = typeCss;
-    const htmlClean = cleanHtml(data);
-    socket.emit("change info", true);
-    socket.emit("text html", `${css} <br> ${htmlClean}`);
+    socket.emit("get text css", `${css}`);
   });
 
-  socket.on("reconnected", data => {
-    socket.emit("data css", "true");
-  });
-
-  socket.on("change types", ({ typeCss }) => {
-    if (typeCss) {
-      const { css } = changeCss(typeCss);
-      typeStl = typeCss;
-      textCss = css;
-    } else typeStl = 1;
-    console.log(typeStl, "hola");
-  });
-
-  socket.on("client off", type => {
+  socket.on("client off", () => {
     limit = 0;
   });
 
-  socket.on("disconnect", type => {
+  socket.on("disconnect", () => {
     limit = 0;
     console.log("user disconnected");
   });

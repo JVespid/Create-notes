@@ -134,13 +134,6 @@ const GlobalState = ({ children }) => {
       },
       {
         id: uuidv4(),
-        name: "subRayado",
-        value: "~~",
-        link: "https://jvespid.github.io/apis/todoList/img/svg/subrayado.svg",
-        data: [],
-      },
-      {
-        id: uuidv4(),
         name: "citas",
         value: ">",
         link: "https://jvespid.github.io/apis/todoList/img/svg/citas.svg",

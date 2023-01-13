@@ -13,13 +13,19 @@ const socket = io("http://localhost:3000/", {
 
 const Notes = ({ setVisible }) => {
   const [textHtml, setTextHtml] = useState("<h1> bienvenido al chat </h1>");
+  const [textCss, setTextCss] = useState(
+    `<style>.content-html1 .body{color: #444;  font-family: Georgia, Palatino, "Palatino Linotype", Times, "Times New Roman", serif;  font-size: 12px;  line-height: 1.5em;  padding: 1em;  margin: 10px; padding:10px;  max-width: 42em;  background: #fefefe;}</style>`,
+  );
 
   React.useEffect(() => {
     setVisible(true);
     try {
       socket.connect();
-      socket.on("text html", html => {
+      socket.on("get text html", html => {
         setTextHtml(html);
+      });
+      socket.on("get text css", css => {
+        setTextCss(css);
       });
     } catch (error) {}
 
@@ -34,7 +40,7 @@ const Notes = ({ setVisible }) => {
   return (
     <GlobalState>
       <Header />
-      <Main textHtml={textHtml} />
+      <Main textHtml={textHtml} textCss={textCss} />
     </GlobalState>
   );
 };
@@ -49,63 +55,57 @@ const Header = () => {
   );
 };
 
-const Main = ({ textHtml }) => {
-  const [preValue, setPrevalue] = useState(
+const Main = ({ textHtml, textCss }) => {
+  const [preValue, setPreValue] = useState(
     localStorage.getItem("textMarkdown"),
   );
 
-  const [change, setChange] = useState(false);
-
+  const [valueCss, setValueCss] = useState(1);
   const refSelect = React.useRef(null);
 
   React.useEffect(() => {
-    setPrevalue(localStorage.getItem("textMarkdown"));
+    setPreValue(localStorage.getItem("textMarkdown"));
   }, [localStorage.getItem("textMarkdown")]);
 
   React.useEffect(() => {
     try {
-      socket.on("data css", data => {
-        socket.emit("change types", { typeCss: refSelect.current.value });
-      });
-      return () => {
-        socket.removeAllListeners("data css");
-      };
+      setValueCss(refSelect.current.value);
+      socket.emit("change css", { type: refSelect.current.value });
     } catch (error) {}
-  }, []);
+  }, [refSelect.current]);
 
   const changeStyle = e => {
-    setChange(!change);
-    socket.emit("change css", {
-      type: e.target.value,
-      data: textHtml.split("</style> <br>")[1],
-    });
-    //alert(e.target.value)
+    setValueCss(refSelect.current.value);
+    socket.emit("change css", { type: e.target.value });
   };
 
   return (
     <main className="main-notes">
       <section className="edit">
-        <AreaEditable socket={socket} preValue={preValue} change={change} />
+        <AreaEditable socket={socket} preValue={preValue} valueCss={valueCss} />
       </section>
 
       <section className="content-html1" id="html">
         <div className="tool-html">
-          <select
-            name="type_css"
-            id="typeCss"
-            onChange={changeStyle}
-            ref={refSelect}
-          >
-            <option value="1">estilo 1</option>
-            <option value="2">estilo 2</option>
-            <option value="3">estilo 3</option>
-            <option value="4">estilo 4</option>
-          </select>
+          <div className="content-select">
+            <select
+              name="type_css"
+              id="typeCss"
+              onChange={changeStyle}
+              ref={refSelect}
+            >
+              <option value="1">estilo 1</option>
+              <option value="2">estilo 2</option>
+              <option value="3">estilo 3</option>
+              <option value="4">estilo 4</option>
+            </select>
+          </div>
         </div>
+
         <div className="html">
           <div
             className="body"
-            dangerouslySetInnerHTML={{ __html: textHtml }}
+            dangerouslySetInnerHTML={{ __html: `${textCss} <br> ${textHtml}` }}
           ></div>
         </div>
       </section>

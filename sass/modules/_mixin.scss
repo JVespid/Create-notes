@@ -1,0 +1,96 @@
+@import url("https://fonts.googleapis.com/css2?family=La+Belle+Aurore&family=Poppins&family=Prompt:wght@100&display=swap");
+
+@mixin position(
+  $type: relative,
+  $top: auto,
+  $left: auto,
+  $z-index: 0,
+  $right: auto,
+  $bottom: auto
+) {
+  position: $type;
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+  z-index: $z-index;
+}
+
+@mixin size(
+  $width: auto,
+  $height: auto,
+  $minWidth: 0,
+  $minHeight: 0,
+  $maxWidth: 100%,
+  $maxHeight: 100%
+) {
+  width: $width;
+  height: $height;
+  min-width: $minWidth;
+  min-height: $minHeight;
+  max-width: $maxWidth;
+  max-height: $maxHeight;
+  @content;
+}
+
+@mixin center-flex($gap: 0px) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  gap: $gap;
+  @content;
+}
+
+@mixin background($color: $transparente, $image: none, $repeat: no-repeat) {
+  background-color: $color;
+  background-image: $image;
+  background-repeat: $repeat;
+  @content;
+}
+
+@mixin color-font($color: auto, $font-size: auto) {
+  color: $color;
+  font-size: $font-size;
+  @content;
+}
+
+@mixin simple-color(
+  $background-color: auto,
+  $color: auto,
+  $border-color: auto
+) {
+  color: $color;
+  background-color: $background-color;
+  border-color: $border-color;
+  @content;
+}
+
+@mixin media-max-width($size: 15.625rem) {
+  @media (max-width: $size) {
+    @content;
+  }
+}
+
+// mixin obligados
+
+@mixin min-value(
+  $width: 100%,
+  $height: max-content,
+  $margin: 0,
+  $font: "Poppins"
+) {
+  min-width: 250px;
+  min-height: 100vh;
+  width: $width;
+  height: $height;
+
+  max-width: 100vw;
+  max-height: max-content;
+  font-family: $font;
+  margin: $margin;
+  font-size: 100%;
+  box-sizing: border-box;
+
+  @content;
+}

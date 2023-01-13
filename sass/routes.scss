@@ -1,54 +1,46 @@
+@import "modules/variables";
+@import "modules/mixin";
+
 .routes {
-  background-color: rgb(30, 30, 30);
-  width: 100%;
-  min-height: 40px;
-  max-height: 100vh;
-  height: auto;
+  @include size(100%, auto, 0, 40px);
+  @include simple-color($fondo-oscuro-solid);
+  @include center-flex {
+    justify-content: flex-end;
+  }
   margin: auto;
-  display: flex;
-  justify-content: flex-end;
   overflow: hidden;
 
   .routes-ul {
-    display: flex;
+    @include size(clamp(100px, 90%, 100vw), 100%);
+    @include simple-color($fondo-oscuro-solid, $fondo-claro-solid);
+    @include center-flex {
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
     list-style-type: none;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    padding: 10px;
-    background-color: rgb(30, 30, 30);
-    width: clamp(100px, 100%, 100vw);
-    height: 100%;
-    color: white;
-    gap: 10px;
+    padding: 10px 0;
+    margin: auto;
 
     .routes-li {
-      /* float: left; */
-      align-items: center;
-      text-decoration: none;
+      @include size(max-content, 100%);
+      @include simple-color($fondo-oscuro-solid);
+      @include center-flex;
       font-size: 1.2rem;
       font-family: "Poppins", sans-serif;
-      width: auto;
-      margin: auto 10px;
-
-      &:last-child {
-        margin-right: clamp(0px, 10%, 40px);
-      }
+      text-decoration: none;
 
       a {
-        display: block;
-        color: white;
-        text-align: center;
-        padding: 14px 16px;
+        @include size(100%, 100%);
+        @include simple-color($transparent, $fondo-claro-solid);
         text-decoration: none;
-        width: 100%;
-        height: 100%;
+        padding: 10px;
 
         p {
-          width: 100%;
-          height: auto;
+          @include size(100%, 100%);
+          @include simple-color($transparent, $fondo-claro-solid);
           border-bottom: 1px solid rgba(0, 0, 0, 0);
           transition: border-bottom 0.2s ease-in-out;
-
           &:hover {
             border-bottom: 1px solid rgb(114, 173, 255);
           }

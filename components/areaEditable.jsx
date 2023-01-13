@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, createRef } from "react";
+import React, { useRef, createRef } from "react";
 import { globalContext } from "../context/global/context";
 import Error from "./error";
 import "../sass/areaEditable.scss";
@@ -15,7 +15,6 @@ const resetTimer = async socket => {
     }
 
     clearTimeout(timeoutId);
-    socket.emit("reconnected", "true");
     timeoutId = setTimeout(function () {
       socket.disconnect();
       console.log("desconectado");
@@ -67,45 +66,36 @@ const historial = Count => {
 };
 let historialCount = historial().count;
 
-const AreaEditable = ({ preValue, socket, change }) => {
+const AreaEditable = ({ preValue, socket, valueCss }) => {
   const textAreaRef = useRef(null);
   const [textArea, setTextArea] = React.useState(false);
   const { array, count } = historial();
   preValue = count != -1 && array[count] ? array[count] : preValue;
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (textAreaRef.current && !textArea) {
       setTextArea(true);
-
       if (preValue) {
         textAreaRef.current.value = preValue;
       } else {
         socket.emit("client on", "true");
-        socket.on("text markdown last save", data => {
-          try {
-            textAreaRef.current.value = data;
-          } catch (error) {}
-        });
-        socket.on("change info", data => {
-          console.log(data);
-          socket.emit("text markdown", textAreaRef.current.value);
+        socket.on("get text markdown", data => {
+          textAreaRef.current.value = data;
         });
       }
     }
     resetTimer(socket);
     textAreaRef.current.addEventListener("keydown", keyDown);
+
+    socket.emit("set text markdown", textAreaRef.current.value);
     return () => {
-      //socket.removeListener("client on","true");
-      // cuando se pasa de pagina se elimina la referencia primero y por eso no se puede eliminar el evento
       resetTimer(socket);
       clearTimeout(timeoutId);
 
       try {
         textAreaRef.current.removeEventListener("keydown", keyDown);
-        // no se puede eliminar el evento y eso esta bien0,pues cuando pasa solo se necesita que no marque error
       } catch (error) {
-        socket.removeAllListeners("text markdown last save");
-        socket.removeAllListeners("change info");
+        socket.removeAllListeners("get text markdown");
         socket.emit("client off", "true");
       }
     };
@@ -113,7 +103,7 @@ const AreaEditable = ({ preValue, socket, change }) => {
 
   React.useEffect(() => {
     resetTimer(socket);
-  }, [change]);
+  }, [valueCss]);
 
   function keyDown(e) {
     // código para programar el tabulador
@@ -226,7 +216,7 @@ export default AreaEditable;
 
 // componentes utilizados en el componente principal
 // area de los subcomponentes del componente principal
-const BtnToll = ({ value, link, data, actionMain, subAction, socket }) => {
+const BtnToll = ({ value, link, data, actionMain, subAction }) => {
   const refDetails = createRef(null);
   const [stateDetails, setStateDetails] = React.useState(`close`);
   const [classDetails, setClassDetails] = React.useState(``);
@@ -274,7 +264,7 @@ const BtnToll = ({ value, link, data, actionMain, subAction, socket }) => {
             ref={refDetails}
           >
             <summary onClick={details}> </summary>
-            {data.map((item, index) => (
+            {data.map(item => (
               <div
                 key={item.id}
                 className="item"
@@ -436,24 +426,22 @@ const Tools = ({ textArea, socket }) => {
   // estos array son para guardar las funciones que se ejecutaran en los botones
   // este array tiene que estar en orden como en el contexto
   const actionMain = [
-    ListType_TYPE_MAIN,
-    ListType_TYPE_MAIN,
-    ListType_TYPE_MAIN,
-    Locked_TYPE_MAIN,
-    Locked_TYPE_MAIN,
-    Locked_TYPE_MAIN,
-    ListType_TYPE_MAIN,
-    Locked_TYPE_MAIN,
-    Links_TYPE_MAIN,
-    Links_TYPE_MAIN,
+    ListType_TYPE_MAIN, // para los #
+    ListType_TYPE_MAIN, // para las listas -
+    ListType_TYPE_MAIN, // para las listas 1.
+    Locked_TYPE_MAIN, // para las negritas
+    Locked_TYPE_MAIN, // para las itálicas
+    ListType_TYPE_MAIN, // para las citas
+    Locked_TYPE_MAIN, // para código
+    Links_TYPE_MAIN, // para los links
+    Links_TYPE_MAIN, // para las imágenes
   ];
   // si no hay un componente secundario,rellenar el espacio con un null y solo si hay un componente principal
   // este array tiene que estar en orden como en el contexto
   const subAction = [
-    ListType_TYPE_MAIN,
-    ListType_TYPE_MAIN,
-    ListType_TYPE_MAIN,
-    null,
+    ListType_TYPE_MAIN, // para los #
+    ListType_TYPE_MAIN, // para las sub listas -
+    ListType_TYPE_MAIN, // para las sub listas 1.
     null,
     null,
     null,
@@ -479,7 +467,6 @@ const Tools = ({ textArea, socket }) => {
               actionMain={actionMain[index]}
               subAction={subAction[index]}
               indexGlobal={index}
-              socket={socket}
             />
           );
         })}
@@ -525,7 +512,7 @@ const configTollsGlobals = (e, socket) => {
   }
 
   resetTimer(socket);
-  socket.emit("text markdown", e[`${type}`].value);
+  socket.emit("set text markdown", e[`${type}`].value);
   historialArray[historialCount] = e[`${type}`].value;
   localStorage.setItem("textMarkdown", e[`${type}`].value);
   localStorage.setItem("historialArray", JSON.stringify(historialArray));

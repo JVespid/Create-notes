@@ -1,45 +1,44 @@
+@import "modules/variables";
+@import "modules/mixin";
+
 .main-notes {
-  width: 95%;
-  min-height: 95vh;
-  height: auto;
-  display: flex;
-  //flex-direction: column;
+  @include size(95%, auto, 250px, 100vh);
+  @include center-flex {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
   padding: 10px 0;
-  overflow: hidden;
   margin: auto;
-  gap:5px;
+
+  overflow: hidden;
 
   .edit {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    min-height: 95vh;
-    height: auto;
-    margin: auto;
-  }
-  .btn-move {
+    @include size(47%, auto, 664px, 95vh);
+    @include center-flex {
+      //flex-wrap: wrap;
+      flex-direction: column;
+    }
   }
 
   .content-html1 {
-    width: 100%;
-    height: auto;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-
+    @include size(47%, auto, 250px, 95vh);
+    @include center-flex {
+      flex-direction: column;
+    }
     &::-webkit-scrollbar {
       display: none;
     }
+
     .html {
-      background-color: rgba(30, 30, 30, 0.8);
-      width: 100%;
-      height: 90vh;
+      @include size(100%, 90vh);
+      @include simple-color($fondo-gris75-opaco);
       overflow: scroll !important;
+      border: 1px solid black;
 
       .body {
         margin: auto;
         width: 100%;
-        min-height: 100%;
+        min-height: 90vh;
         &::-webkit-scrollbar {
           display: none;
         }
@@ -47,21 +46,31 @@
     }
 
     .tool-html {
-      background-color: rgba(30, 30, 30, 0.8);
-      width: 100%;
-      min-height: 40px;
-      height: auto;
+      @include size(100%, auto, 0, 40px, 100%, clamp(80px, 10vh, 400px));
 
-      display: Flex;
-      justify-content: flex-start;
-      flex-wrap: wrap;
+      @include simple-color($fondo-gris75-opaco);
+      @include center-flex(30px) {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
 
-      gap: 30px;
       margin: 10px 0 10px 0;
       padding: 20px;
 
-      select{
-        height: 40px;
+      overflow: visible;
+
+      .content-select {
+        display: inline-block;
+        cursor: pointer;
+
+        border: 1px solid black;
+        @include size(max-content, 40px);
+
+        select {
+          @include size(max-content, max-content, 30px, 40px);
+          cursor: pointer;
+          border: 1px solid black;
+        }
       }
     }
   }

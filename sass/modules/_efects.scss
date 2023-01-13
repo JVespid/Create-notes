@@ -1,0 +1,22 @@
+@mixin espejo(
+  $color-background: $color-background-espejo-primario,
+  $color-borde: $color-borde-espejo-primario
+) {
+  background: $color-background;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid $color-borde;
+  @content;
+}
+
+@mixin background-Malla(
+  $background-color: rgb(30, 30, 30),
+  $malla: rgb(123, 53, 177)
+) {
+  background-color: $background-color;
+  opacity: 1;
+  background-image: linear-gradient($malla 4px, transparent 4px),
+    linear-gradient(to right, $malla 4px, $background-color 4px);
+  background-size: 80px 80px;
+}

@@ -19,6 +19,10 @@ html,
 body {
   padding: 0;
 }
+html{
+  max-width: 1920px;
+  max-height: 1080px;
+}
 
 h1 {
   font-size: 2em;

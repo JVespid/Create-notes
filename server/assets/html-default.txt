@@ -1,4 +1,4 @@
-<h1 id="bienvenido-al-chat">Bienvenido al chat</h1>
+<h1 id="bienvenido-al-chat">Bienvenid@</h1>
 <p>
   Escribe lo que quieras con el formato que <strong>quieras</strong> por
   ejemplo:
@@ -31,9 +31,9 @@
   dinámicos
 </p>
 <p>
-  <a
+  <a target="_blank"
     href="https://images.unsplash.com/photo-1593288942460-e321b92a6cde?ixlib=rb-4.0.3"
-    >aquí_escribe_cualquier_texto</a
+    >aquí_escribe_cualquier_texto</target=
   >
 </p>
 <p>Aunque si quieres también puedes ingresar la imagen aquí mismo</p>

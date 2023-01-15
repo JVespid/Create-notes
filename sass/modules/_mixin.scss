@@ -14,6 +14,7 @@
   bottom: $bottom;
   left: $left;
   z-index: $z-index;
+  @content;
 }
 
 @mixin size(
@@ -93,4 +94,8 @@
   box-sizing: border-box;
 
   @content;
+}
+
+@mixin max-height-mix($height: 100vh, $min: auto, $max: 1280px) {
+  max-height: clamp($min, $height, $max);
 }

@@ -286,7 +286,7 @@ const BtnToll = ({ value, link, data, actionMain, subAction }) => {
 // componente hecho para separar el componente de las herramientas pues sera grande
 // recordar que si no hay por lo menos un elemento en el array de las funciones de funcionamiento principal no se obtendrá datos del contexto y no se compilara el componente (recuerde siempre crear un componente principal para el componente del componente)
 const Tools = ({ textArea, socket }) => {
-  const { tools } = React.useContext(globalContext);
+  const { tools_mk } = React.useContext(globalContext);
 
   // sección de las funciones de funcionamiento principal:--------------
 
@@ -455,7 +455,7 @@ const Tools = ({ textArea, socket }) => {
       <div className="tools">
         {/* botones de las herramientas de diseño */}
 
-        {tools.map((item, index) => {
+        {tools_mk.map((item, index) => {
           if (actionMain[index] == undefined) return null;
 
           return (

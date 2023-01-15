@@ -2,35 +2,70 @@
 @import "modules/mixin";
 
 .main-notes {
-  @include size(95%, auto, 250px, 100vh);
+  @include size(95%, auto, 42em, 100vh, 100vw, auto);
   @include center-flex {
+    justify-content: center;
     flex-wrap: wrap;
     gap: 5px;
   }
-  padding: 10px 0;
+  position: relative;
   margin: auto;
 
   overflow: hidden;
 
   .edit {
-    @include size(47%, auto, 664px, 95vh);
-    @include center-flex {
-      //flex-wrap: wrap;
-      flex-direction: column;
+    display: flex;
+
+    .sub-edit {
+      min-height: calc(100% - 80px);
+      @include center-flex {
+        flex-direction: column;
+      }
+      overflow: hidden;
+    }
+    .tools-views {
+      @include size(50vw, auto, 20px, 50vh, 40px, 50%);
+      @include center-flex;
+      margin: 10px 0 5px 5px;
+      .content-data-t-views {
+        @include size(100%, auto);
+        @include simple-color($fondo-claro-solid);
+        @include center-flex(15px) {
+          flex-direction: column;
+        }
+        overflow: hidden;
+        padding: 20px 0;
+        margin: auto;
+        border: 1px solid $transparent;
+        &:hover {
+          border-color: black;
+          transition: border-color 0.5s;
+        }
+        .item {
+          @include size(100%, auto);
+          object-fit: cover;
+          cursor: pointer;
+          border-radius: 15px;
+          border: 1px solid $transparent;
+          &:hover {
+            border: 1px solid black;
+            transition: border-color 0.5s;
+          }
+        }
+      }
     }
   }
 
   .content-html1 {
-    @include size(47%, auto, 250px, 95vh);
+
     @include center-flex {
       flex-direction: column;
     }
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    overflow: hidden;
 
     .html {
       @include size(100%, 90vh);
+      min-height: max-content;
       @include simple-color($fondo-gris75-opaco);
       overflow: scroll !important;
       border: 1px solid black;
@@ -38,7 +73,7 @@
       .body {
         margin: auto;
         width: 100%;
-        min-height: 90vh;
+        min-height: max-content;
         &::-webkit-scrollbar {
           display: none;
         }
@@ -46,7 +81,7 @@
     }
 
     .tool-html {
-      @include size(100%, auto, 0, 40px, 100%, clamp(80px, 10vh, 400px));
+      @include size(100%, auto, 0, 80px, 100%, clamp(80px, 10vh, 400px));
 
       @include simple-color($fondo-gris75-opaco);
       @include center-flex(30px) {

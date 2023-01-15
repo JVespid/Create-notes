@@ -6,14 +6,14 @@
     user-select: none;
   }
 
-  @include size(100%, auto, 0, 40px, 100%, clamp(80px, 10vh, 400px));
+  @include size(100%, auto, 0, 80px, 100%, clamp(80px, 10vh, 400px));
   @include simple-color($fondo-gris97-opaco);
   @include center-flex(30px) {
     justify-content: flex-start;
     flex-wrap: wrap;
   }
 
-  margin: 10px 0 10px 0;
+  margin: 10px 0;
   padding: 20px;
 
   overflow: visible;
@@ -33,6 +33,7 @@
 
     border: 1px solid black;
     @include size(max-content, 40px);
+    min-height: 40px;
 
     .toll-main {
       min-width: 30px;
@@ -62,6 +63,10 @@
 
         border: 1px solid black;
         padding: 5px;
+
+        * {
+          margin: 0 auto;
+        }
       }
     }
     .open {
@@ -71,19 +76,20 @@
 }
 
 .text-area {
-  width: 100%;
-  height: 90vh;
+  @include size(100%, 90vh);
 
   textarea {
     display: inline-block;
     outline: none;
     resize: none;
 
+    border: 1px solid black;
+
     width: 100%;
     height: 90vh;
 
     &::-webkit-scrollbar {
-      display: none;
+      //display: none;
     }
   }
 }

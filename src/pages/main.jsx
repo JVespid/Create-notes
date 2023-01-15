@@ -105,11 +105,7 @@ const MainComponent = () => {
         </p>
         <p> Aunque si quieres también puedes ingresar la imagen aquí mismo</p>
         <p>
-          {" "}
-          <img
-            src="https://images.unsplash.com/photo-1593288942460-e321b92a6cde"
-            alt="texto_si_la_imagen_no_carga"
-          />
+          
           y si eres programador también puedes usar la función de mostrar código
           de una forma muy sencilla como por ejemplo
         </p>

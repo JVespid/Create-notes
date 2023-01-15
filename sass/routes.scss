@@ -2,7 +2,7 @@
 @import "modules/mixin";
 
 .routes {
-  @include size(100%, auto, 0, 40px);
+  @include size(100%, auto, 42em, 40px);
   @include simple-color($fondo-oscuro-solid);
   @include center-flex {
     justify-content: flex-end;
@@ -11,7 +11,7 @@
   overflow: hidden;
 
   .routes-ul {
-    @include size(clamp(100px, 90%, 100vw), 100%);
+    @include size(clamp(100px, 90%, 100vw), 100%,40em);
     @include simple-color($fondo-oscuro-solid, $fondo-claro-solid);
     @include center-flex {
       justify-content: flex-end;

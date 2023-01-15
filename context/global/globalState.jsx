@@ -25,7 +25,7 @@ const GlobalState = ({ children }) => {
       ],
     },
     changes: {},
-    tools: [
+    tools_mk: [
       {
         id: uuidv4(),
         name: "heading",
@@ -169,11 +169,24 @@ const GlobalState = ({ children }) => {
       },
     ],
 
-    GroupsAndNotes: [
+    btn_pageNotes_viewport: [
       {
         id: uuidv4(),
-        nameGroup: `name-group`,
-        notes: [{ title: "", contentMD: "", contentHtml: "" }],
+        name: "sin vista",
+        src: "https://jvespid.github.io/apis/todoList/img/svg/closeViewport.svg",
+        action: "close",
+      },
+      {
+        id: uuidv4(),
+        name: "media vista",
+        src: "https://jvespid.github.io/apis/todoList/img/svg/bock.svg",
+        action: "mid",
+      },
+      {
+        id: uuidv4(),
+        name: "vista completa",
+        src: "https://jvespid.github.io/apis/todoList/img/svg/completeViewport.svg",
+        action: "full",
       },
     ],
   };
@@ -196,16 +209,20 @@ const GlobalState = ({ children }) => {
     });
   };
 
+  const data = React.useMemo(
+    () => ({
+      state,
+      pageMain: state.pageMain,
+      tools_mk: state.tools_mk,
+      btn_pageNotes_viewport: state.btn_pageNotes_viewport,
+      changeState,
+      resetGlobalState,
+    }),
+    [],
+  );
+
   return (
-    <globalContext.Provider
-      value={{
-        state,
-        pageMain: state.pageMain,
-        tools: state.tools,
-        changeState,
-        resetGlobalState,
-      }}
-    >
+    <globalContext.Provider value={data}>
       <>{children}</>
     </globalContext.Provider>
   );

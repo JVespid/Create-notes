@@ -20,7 +20,7 @@ app.use(express.static(publicPath));
 
 app.use(
   cors({
-    origin: ["http://127.0.0.1:5173/", "http://localhost:5173/"],
+    origin: ["http://127.0.0.1:5173/", "http://localhost:5173/", "https://notes-jvespid.vercel.app/"],
   }),
 );
 
@@ -58,10 +58,11 @@ io.on("connection", socket => {
   socket.on("set text markdown", markdownText => {
     // código markdown para convertir a html
     const htmlString = marked(markdownText);
-    const htmlClean = cleanHtml(htmlString);
+    let htmlClean = cleanHtml(htmlString);
+    htmlClean = htmlClean.split("<a"); 
+    htmlClean = htmlClean.join("<a target='_blank'");
     socket.emit("get text html", `${htmlClean}`);
   });
-
 
   socket.on("change css", ({ type }) => {
     const { css, typeCss } = changeCss(type);

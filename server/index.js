@@ -19,7 +19,7 @@ app.use(express.static(publicPath));
 
 app.use(
   cors({
-    origin: "*",//["http://127.0.0.1:5173/", "http://localhost:5173/", "https://notes-jvespid.vercel.app/"],
+    origin: "*", //["http://127.0.0.1:5173/", "http://localhost:5173/", "https://notes-jvespid.vercel.app/"],
   }),
 );
 
@@ -58,7 +58,7 @@ io.on("connection", socket => {
     // código markdown para convertir a html
     const htmlString = marked(markdownText);
     let htmlClean = cleanHtml(htmlString);
-    htmlClean = htmlClean.split("<a"); 
+    htmlClean = htmlClean.split("<a");
     htmlClean = htmlClean.join("<a target='_blank'");
     socket.emit("get text html", `${htmlClean}`);
   });
@@ -80,12 +80,12 @@ io.on("connection", socket => {
   });
 });
 
-server.listen(PORT, () => {
+const serve = server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   console.log(`http://localhost:${PORT}`);
 });
 
-
+module.exports = serve;
 
 const cleanHtml = html => {
   // Limpiar el código HTML utilizando la función sanitize de la librería

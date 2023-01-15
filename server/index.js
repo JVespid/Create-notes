@@ -1,4 +1,3 @@
-//const { createServer } = require('vite')
 const { marked } = require("marked");
 const fs = require("fs");
 const path = require("path");
@@ -19,6 +18,12 @@ const publicPath = path.join(__dirname, "..", "dist");
 app.use(express.static(publicPath));
 
 app.use(
+  cors({
+    origin: "*",//["http://127.0.0.1:5173/", "http://localhost:5173/", "https://notes-jvespid.vercel.app/"],
+  }),
+);
+
+server.use(
   cors({
     origin: "*",//["http://127.0.0.1:5173/", "http://localhost:5173/", "https://notes-jvespid.vercel.app/"],
   }),
@@ -87,6 +92,7 @@ server.listen(PORT, () => {
 });
 
 
+module.exports = server
 
 const cleanHtml = html => {
   // Limpiar el código HTML utilizando la función sanitize de la librería

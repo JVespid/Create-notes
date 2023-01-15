@@ -7,13 +7,13 @@ import { motion } from "framer-motion";
 import useWindowSize from "../../components/hooks/useWindowSize";
 
 import { io } from "socket.io-client";
-const host = process.env.host? process.env.host : "http://localhost:3000";
-const socket = io(process.env.host, {
+/* const host = process.env.host? process.env.host : "http://localhost:3000";
+const socket = io(host, {
   transports: ["websocket"],
   origin: "*",
-});
+}); */
 
-//const socket = io();
+const socket = io();
 
 const Notes = ({ setVisible }) => {
   const [textHtml, setTextHtml] = React.useState("<h1>Error del servidor</h1>");

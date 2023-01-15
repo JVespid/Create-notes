@@ -87,7 +87,6 @@ server.listen(PORT, () => {
 });
 
 
-module.exports = server
 
 const cleanHtml = html => {
   // Limpiar el código HTML utilizando la función sanitize de la librería

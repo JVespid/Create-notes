@@ -80,12 +80,11 @@ io.on("connection", socket => {
   });
 });
 
-const serve = server.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   console.log(`http://localhost:${PORT}`);
 });
 
-module.exports = serve;
 
 const cleanHtml = html => {
   // Limpiar el código HTML utilizando la función sanitize de la librería

@@ -11,12 +11,12 @@ let host = "http://localhost:3000";
 /* if (typeof process) {
   host = process.env.host;
 } */
-/* const socket = io(host, {
+const socket = io(host, {
   transports: ["websocket"],
   origin: "*",
-}); */
+});
 
-const socket = io();
+//const socket = io();
 
 const Notes = ({ setVisible }) => {
   const [textHtml, setTextHtml] = React.useState("<h1>Error del servidor</h1>");
@@ -231,6 +231,12 @@ const Main = ({ textHtml, textCss }) => {
               <option value="3">estilo 3</option>
               <option value="4">estilo 4</option>
             </select>
+          </div>
+
+          <div className="close-btn-html">
+            <button className="change-id">Cambiar id</button>
+            <button className="what-is-id">¿Para que sirve el id?</button>
+            <button className="download">Descargar</button>
           </div>
         </div>
 

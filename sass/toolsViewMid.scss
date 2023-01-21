@@ -1,0 +1,34 @@
+@import "modules/variables";
+@import "modules/mixin";
+
+.tools-views {
+  @include size(50vw, auto, 20px, 50vh, 40px, 50%);
+  @include center-flex;
+  margin: 10px 0 5px 5px;
+  .content-data-t-views {
+    @include size(100%, auto);
+    @include simple-color($fondo-claro-solid);
+    @include center-flex(15px) {
+      flex-direction: column;
+    }
+    overflow: hidden;
+    padding: 20px 0;
+    margin: auto;
+    border: 1px solid $transparent;
+    &:hover {
+      border-color: black;
+      transition: border-color 0.5s;
+    }
+    .item {
+      @include size(100%, auto);
+      object-fit: cover;
+      cursor: pointer;
+      border-radius: 15px;
+      border: 1px solid $transparent;
+      &:hover {
+        border: 1px solid black;
+        transition: border-color 0.5s;
+      }
+    }
+  }
+}

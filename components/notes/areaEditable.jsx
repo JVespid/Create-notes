@@ -1,7 +1,7 @@
 import React, { useRef, createRef } from "react";
-import { globalContext } from "../context/global/context";
-import Error from "./error";
-import "../sass/areaEditable.scss";
+import { globalContext } from "../../context/global/context";
+import Error from "../error";
+import "../../sass/areaEditable.scss";
 
 let timeToConnection = false;
 let timeoutId;

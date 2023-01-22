@@ -27,17 +27,16 @@ const ToolHtml = ({ refSelect, changeStyle, socket }) => {
 
         <motion.div
           variants={burger_content}
-          initial={"close"}
+          initial={false}
           animate={stateBurger}
           className="close-btn-html"
         >
           <motion.button
             layout
             variants={burger}
-            initial={"close"}
-            animate={stateBurger}
             className="burger-content"
             onClick={changeStateBurger}
+            whileTap={{ scale: 0.97 }}
           >
             <motion.div
               layout
@@ -66,47 +65,20 @@ const ToolHtml = ({ refSelect, changeStyle, socket }) => {
           </motion.button>
 
           <motion.ul
-            layout
             variants={hidden_content}
-            animate={stateBurger}
-            initial={"close"}
+            style={{ pointerEvents: stateBurger == "open" ? "auto" : "none" }}
             className="hidden"
           >
-            <motion.li
-              layout
-              variants={li_hidden}
-              animate={stateBurger}
-              initial={"close"}
-              custom={"change-id"}
-              className="li-hidden"
-            >
-              <motion.button layout className="change-id">
-                Cambiar id
-              </motion.button>
+            <motion.li variants={li_hidden} className="li-hidden change-id">
+              Cambiar id
             </motion.li>
 
-            <motion.li
-              layout
-              variants={li_hidden}
-              animate={stateBurger}
-              initial={"close"}
-              custom={"what-is-id"}
-              className="li-hidden"
-            >
-              <motion.button layout className="what-is-id">
-                ¿Para que sirve el id?
-              </motion.button>
+            <motion.li variants={li_hidden} className="li-hidden what-is-id">
+              ¿Para que sirve el id?
             </motion.li>
 
-            <motion.li
-              layout
-              variants={li_hidden}
-              animate={stateBurger}
-              initial={"close"}
-              custom={"download"}
-              className="li-hidden"
-            >
-              <motion.button className="download">Descargar</motion.button>
+            <motion.li variants={li_hidden} className="li-hidden download">
+              Descargar
             </motion.li>
           </motion.ul>
         </motion.div>
@@ -168,10 +140,26 @@ const sub_burger = {
 
 // animaciones de los elementos desplegables del botón hamburguesa
 const hidden_content = {
-  open: {},
-  close: {},
+  open: {
+    clipPath: "inset(0% 0% 0% 0% round 10px)",
+    transition: {
+      type: "spring",
+      bounce: 0,
+      duration: 0.7,
+      delayChildren: 0.3,
+      staggerChildren: 0.05,
+    },
+  },
+  close: {
+    clipPath: "inset(10% 50% 90% 50% round 10px)",
+    transition: {
+      type: "spring",
+      bounce: 0,
+      duration: 0.3,
+    },
+  },
 };
-
+/* 
 const li_hidden = {
   open: type => {
     switch (type) {
@@ -190,4 +178,13 @@ const li_hidden = {
     width: "100%",
     height: "15%",
   },
+};
+ */
+const li_hidden = {
+  open: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 300, damping: 24 },
+  },
+  close: { opacity: 0, y: 20, transition: { duration: 0.2 } },
 };

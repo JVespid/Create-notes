@@ -38,12 +38,10 @@
     gap: 10px;
     padding: 0;
 
-
     .burger-content {
       @include center-flex(15%) {
         flex-direction: column;
       }
-      
 
       &:hover {
         cursor: pointer;
@@ -56,13 +54,29 @@
     }
 
     .hidden {
-      
-      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: $fondo-oscuro-solid;
+
+      list-style: none;
+      margin: 0;
+      padding: 10px;
+
+      z-index: 300;
       li {
+        color: $fondo-claro-solid;
+        cursor: pointer;
+
+        border-bottom: 1px solid $fondo-gris75-opaco;
+        
+        display: block;
         list-style: none;
-
-        button{
-
+        margin: 0;
+        padding: 10px;
+        box-sizing: content-box;
+        &:hover{
+          border-top: 1px solid $fondo-gris75-opaco;
         }
       }
     }

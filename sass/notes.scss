@@ -1,6 +1,13 @@
 @import "modules/variables";
 @import "modules/mixin";
 
+.container-notes{
+  
+  @include size(100vw, auto, 42em, 0, auto, auto);
+  @include simple-color($fondo-oscuro-solid);
+  border-top: 1px solid $fondo-claro-solid;
+  padding-top: 50px;
+}
 .main-notes {
   @include size(95%, auto, 42em, 100vh, 100vw, auto);
   @include center-flex {

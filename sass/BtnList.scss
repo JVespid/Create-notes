@@ -1,0 +1,74 @@
+@import "modules/variables";
+@import "modules/mixin";
+
+.tool-general {
+  @include size(max-content, 40px, max-content, 40px, max-content, 40px);
+  @include simple-color($color-boton-fondo);
+  display: flex;
+  align-items: center;
+  align-content: center;
+  padding: 0;
+
+  .title-content {
+    @include size(auto, 40px, 40px, 40px, max-content, 40px);
+    @include simple-color($color-boton-fondo);
+    padding: 0;
+    cursor: pointer;
+    img{
+      @include size(90%,90%);
+    }
+  }
+
+  .options-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+
+    @include simple-color($color-boton-fondo);
+    button {
+      @include center-flex(15%) {
+        flex-direction: column;
+      }
+      @include size(40px, 40px, 40px, 40px, 40px, 40px);
+      padding: 1px;
+      cursor: pointer;
+      div {
+        @include simple-color($fondo-oscuro-solid);
+      }
+    }
+    .burger-content {
+    }
+    .arrow-content {
+    }
+
+    & > .ul-hidden {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: $fondo-oscuro-solid;
+
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      z-index: 300;
+      & > .li-hidden {
+        color: $fondo-claro-solid;
+        cursor: pointer;
+
+        border-bottom: 1px solid $fondo-gris75-opaco;
+
+        display: block;
+        list-style: none;
+        margin: 0;
+        padding: 10px;
+        box-sizing: content-box;
+        & ul{
+          padding: 10px;
+          margin: 0 10px;
+        }
+      }
+    }
+  }
+}

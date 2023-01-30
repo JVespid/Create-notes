@@ -1,5 +1,6 @@
 import React, { useRef, createRef } from "react";
 import { globalContext } from "../../context/global/context";
+import BtnList from "./btnList";
 import Error from "../error";
 import "../../sass/areaEditable.scss";
 
@@ -421,44 +422,54 @@ const Tools = ({ textArea, socket }) => {
     }
   };
 
-  // sección de las funciones de funcionamiento secundario----------------------
-
-  // estos array son para guardar las funciones que se ejecutaran en los botones
-  // este array tiene que estar en orden como en el contexto
-  const actionMain = [
-    ListType_TYPE_MAIN, // para los #
-    ListType_TYPE_MAIN, // para las listas -
-    ListType_TYPE_MAIN, // para las listas 1.
-    Locked_TYPE_MAIN, // para las negritas
-    Locked_TYPE_MAIN, // para las itálicas
-    ListType_TYPE_MAIN, // para las citas
-    Locked_TYPE_MAIN, // para código
-    Links_TYPE_MAIN, // para los links
-    Links_TYPE_MAIN, // para las imágenes
-  ];
-  // si no hay un componente secundario,rellenar el espacio con un null y solo si hay un componente principal
-  // este array tiene que estar en orden como en el contexto
-  const subAction = [
-    ListType_TYPE_MAIN, // para los #
-    ListType_TYPE_MAIN, // para las sub listas -
-    ListType_TYPE_MAIN, // para las sub listas 1.
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-  ];
+  // sección de las funciones de funcionamiento del botón title y del botón options----------------------
+  const actionTitles = {
+    heading: ListType_TYPE_MAIN,
+    uList: ListType_TYPE_MAIN,
+    oList: ListType_TYPE_MAIN,
+    bold: Locked_TYPE_MAIN,
+    italic: Locked_TYPE_MAIN,
+    citas: ListType_TYPE_MAIN,
+    code: Locked_TYPE_MAIN,
+    link: Links_TYPE_MAIN,
+    img: Links_TYPE_MAIN,
+  };
+  const actionOptions = {
+    heading: [
+      ListType_TYPE_MAIN,
+      ListType_TYPE_MAIN,
+      ListType_TYPE_MAIN,
+      ListType_TYPE_MAIN,
+      ListType_TYPE_MAIN,
+      ListType_TYPE_MAIN,
+    ],
+    uList: [ListType_TYPE_MAIN, ListType_TYPE_MAIN, ListType_TYPE_MAIN],
+    oList: [ListType_TYPE_MAIN, ListType_TYPE_MAIN, ListType_TYPE_MAIN],
+  };
 
   return (
     <>
       <div className="tools">
-        {/* botones de las herramientas de diseño */}
+        {tools_mk.map((item, index) => (
+          <BtnList
+            key={item.id}
+            type={"arrow"}
+            title={`<img src="${item.link}" alt="imagen principal de ${item.name}" />`}
+            titleFunctions={actionTitles[`${item.name}`]}
+            options={item.data}
+            optionsFunctions={actionOptions[`${item.name}`]}
+            
+            iteratorOptionsName={"html"}
+            iteratorOptionsValue={"value"}
+            propsTitle={item.value}
+            propsOptions={item.data}
+          />
+        ))}
+      </div>
+    </>
+  );
 
-        {tools_mk.map((item, index) => {
-          if (actionMain[index] == undefined) return null;
-
-          return (
+  /* return (
             <BtnToll
               key={item.id}
               link={item.link}
@@ -468,11 +479,7 @@ const Tools = ({ textArea, socket }) => {
               subAction={subAction[index]}
               indexGlobal={index}
             />
-          );
-        })}
-      </div>
-    </>
-  );
+          ); */
 };
 
 // elementos ejecutados al presionar algún botón

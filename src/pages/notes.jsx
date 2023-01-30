@@ -49,13 +49,16 @@ const Notes = ({ setVisible }) => {
 
   return (
     <GlobalState>
-      <Header />
-      <Main textHtml={textHtml} textCss={textCss} />
+      <div className="container-notes">
+        <Header />
+        <Main textHtml={textHtml} textCss={textCss} />
+      </div>
     </GlobalState>
   );
 };
 
 export default Notes;
+
 
 const Header = () => {
   return (
@@ -64,6 +67,7 @@ const Header = () => {
     </header>
   );
 };
+
 
 const Main = ({ textHtml, textCss }) => {
   const refSelect = React.useRef(null);

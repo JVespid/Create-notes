@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import React from "react";
 import Main from "./pages/main";
 import Notes from "./pages/notes";
-import Session from "./pages/session";
+import Uso from "./pages/uso";
 import "./../sass/routes.scss";
 
 import { globalContext } from "./../context/global/context";
@@ -46,8 +46,8 @@ function App({ socket }) {
           />
           <Route
             exact
-            path="/Session"
-            element={<Session setVisible={setVisible} />}
+            path="/use"
+            element={<Uso setVisible={setVisible} />}
           />
         </Routes>
       </BrowserRouter>

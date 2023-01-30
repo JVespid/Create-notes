@@ -29,56 +29,6 @@
       border: 1px solid black;
     }
   }
-
-  .close-btn-html {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    align-content: center;
-    gap: 10px;
-    padding: 0;
-
-    .burger-content {
-      @include center-flex(15%) {
-        flex-direction: column;
-      }
-
-      &:hover {
-        cursor: pointer;
-      }
-
-      .burger-filling {
-        display: inline-block;
-        background-color: black;
-      }
-    }
-
-    .hidden {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      background: $fondo-oscuro-solid;
-
-      list-style: none;
-      margin: 0;
-      padding: 10px;
-
-      z-index: 300;
-      li {
-        color: $fondo-claro-solid;
-        cursor: pointer;
-
-        border-bottom: 1px solid $fondo-gris75-opaco;
-        
-        display: block;
-        list-style: none;
-        margin: 0;
-        padding: 10px;
-        box-sizing: content-box;
-        &:hover{
-          border-top: 1px solid $fondo-gris75-opaco;
-        }
-      }
-    }
+  .content-burger-tool-html {
   }
 }

@@ -12,7 +12,7 @@ const ToolHtml = ({ refSelect, changeStyle, socket }) => {
 
   return (
     <>
-      <div className="tool-html">
+      <div className="tool-html">{/* 
         <div className="content-select">
           <select
             name="type_css"
@@ -25,7 +25,7 @@ const ToolHtml = ({ refSelect, changeStyle, socket }) => {
             <option value="3">estilo 3</option>
             <option value="4">estilo 4</option>
           </select>
-        </div>
+        </div> */}
 
         <div className="content-burger-tool-html">
           <BtnList

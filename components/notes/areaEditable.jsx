@@ -67,7 +67,7 @@ const historial = Count => {
 };
 let historialCount = historial().count;
 
-const AreaEditable = ({ preValue, socket, valueCss }) => {
+const AreaEditable = ({ preValue, valueCss, socket, setTextMk }) => {
   const textAreaRef = useRef(null);
   const [textArea, setTextArea] = React.useState(false);
   const { array, count } = historial();
@@ -78,33 +78,20 @@ const AreaEditable = ({ preValue, socket, valueCss }) => {
       setTextArea(true);
       if (preValue) {
         textAreaRef.current.value = preValue;
-      } else {
-        socket.emit("client on", "true");
-        socket.on("get text markdown", data => {
-          textAreaRef.current.value = data;
-        });
       }
     }
-    resetTimer(socket);
     textAreaRef.current.addEventListener("keydown", keyDown);
 
-    socket.emit("set text markdown", textAreaRef.current.value);
     return () => {
-      resetTimer(socket);
       clearTimeout(timeoutId);
 
       try {
         textAreaRef.current.removeEventListener("keydown", keyDown);
-      } catch (error) {
-        socket.removeAllListeners("get text markdown");
-        socket.emit("client off", "true");
-      }
+      } catch (error) {}
     };
   }, [textAreaRef.current]);
 
-  React.useEffect(() => {
-    resetTimer(socket);
-  }, [valueCss]);
+  React.useEffect(() => {}, [valueCss]);
 
   function keyDown(e) {
     // código para programar el tabulador
@@ -116,7 +103,7 @@ const AreaEditable = ({ preValue, socket, valueCss }) => {
 
       if (start === end) {
         value.splice(start, 0, `  `);
-        returnToLine(socket, start, end, value, e, 2);
+        returnToLine(setTextMk, start, end, value, e, 2);
       }
 
       if (start !== end) {
@@ -134,7 +121,7 @@ const AreaEditable = ({ preValue, socket, valueCss }) => {
             value.splice(i + 1, 0, `  `);
           }
         }
-        returnToLine(socket, start, end, value, e, 2, 2 * cantE);
+        returnToLine(setTextMk, start, end, value, e, 2, 2 * cantE);
       }
     }
     // codigo para programar las fabulaciones automáticas con el enter
@@ -169,7 +156,7 @@ const AreaEditable = ({ preValue, socket, valueCss }) => {
       //let spaceTotal = startLineInEnter(start,value);
       spaceTotal = spaceTotal ? spaceTotal : "";
       value.splice(start, 0, "\n" + spaceTotal);
-      returnToLine(socket, start, end, value, e, spaceTotal.length + 1);
+      returnToLine(setTextMk, start, end, value, e, spaceTotal.length + 1);
     }
     // codigo para hacer el control z
     if (e.keyCode == 90 && e.ctrlKey) {
@@ -180,20 +167,21 @@ const AreaEditable = ({ preValue, socket, valueCss }) => {
         const { array, count } = historial(historialCount);
         historialCount = count;
 
-        returnToLine(socket, start, end, array, e, 1, false, false);
+        returnToLine(setTextMk, start, end, array, e, 1, false, false);
       }
     }
   }
 
   const keyPress = e => {
     //socket.emit("text markdown", e.target.value);
+    setTextMk(e.target.value);
     configTollsGlobals(e, socket);
   };
 
   return (
     <>
       {textArea ? (
-        <Tools textArea={textAreaRef} socket={socket} />
+        <Tools textArea={textAreaRef} />
       ) : (
         <Error
           name="Error al cargar"
@@ -215,78 +203,9 @@ const AreaEditable = ({ preValue, socket, valueCss }) => {
 
 export default AreaEditable;
 
-// componentes utilizados en el componente principal
-// area de los subcomponentes del componente principal
-const BtnToll = ({ value, link, data, actionMain, subAction }) => {
-  const refDetails = createRef(null);
-  const [stateDetails, setStateDetails] = React.useState(`close`);
-  const [classDetails, setClassDetails] = React.useState(``);
-  const [classControls, seClassControls] = React.useState(``);
-  // sirve para hacer un diseño dinámico mas legible al solo cambiar ciertas clases
-  const details = data => {
-    if (stateDetails == "open") {
-      if (data == 2) refDetails.current.removeAttribute("open");
-      setStateDetails(`close`);
-      setClassDetails(``);
-      seClassControls(``);
-    } else {
-      setStateDetails(`open`);
-      seClassControls(`block-controls-visible`);
-      setClassDetails(`open`);
-    }
-  };
-
-  if (!link && !actionMain) return null;
-
-  return (
-    <>
-      {data && subAction ? (
-        <div
-          className={`block-controls ${classControls}`}
-          onClick={() => details(2)}
-        ></div>
-      ) : null}
-
-      <div className="content-btn">
-        {actionMain ? (
-          <>
-            <img
-              className="toll-main"
-              onClick={() => actionMain(value)}
-              src={link}
-            />
-          </>
-        ) : null}
-
-        {data && subAction ? (
-          <details
-            className={`details ${classDetails}`}
-            state="close"
-            ref={refDetails}
-          >
-            <summary onClick={details}> </summary>
-            {data.map(item => (
-              <div
-                key={item.id}
-                className="item"
-                data="item"
-                onClick={() => {
-                  details(2);
-                  subAction(item.value);
-                }}
-                dangerouslySetInnerHTML={{ __html: item.html }}
-              ></div>
-            ))}
-          </details>
-        ) : null}
-      </div>
-    </>
-  );
-};
-
 // componente hecho para separar el componente de las herramientas pues sera grande
 // recordar que si no hay por lo menos un elemento en el array de las funciones de funcionamiento principal no se obtendrá datos del contexto y no se compilara el componente (recuerde siempre crear un componente principal para el componente del componente)
-const Tools = ({ textArea, socket }) => {
+const Tools = ({ textArea }) => {
   const { tools_mk } = React.useContext(globalContext);
 
   // sección de las funciones de funcionamiento principal:--------------
@@ -334,7 +253,7 @@ const Tools = ({ textArea, socket }) => {
       }
     }
     returnToLine(
-      socket,
+      setTextMk,
       start,
       end,
       value,
@@ -355,28 +274,36 @@ const Tools = ({ textArea, socket }) => {
 
       value.splice(start, 0, `${e}`);
       value.splice(end + 1, 0, `${e}`);
-      returnToLine(socket, start, end, value, textArea, e.length);
+      returnToLine(setTextMk, start, end, value, textArea, e.length);
       return;
     }
 
     if (start == end && e !== "```") {
       //value.splice(start,0,`> `);
       value.splice(start, 0, `${e} ${e}`);
-      returnToLine(socket, start, end, value, textArea, e.length, e.length + 1);
+      returnToLine(
+        setTextMk,
+        start,
+        end,
+        value,
+        textArea,
+        e.length,
+        e.length + 1,
+      );
       return;
     }
 
     if (start != end && e == "```") {
       value.splice(start, 0, `${e}\n`);
       value.splice(end + 1, 0, `\n${e}`);
-      returnToLine(socket, start, end, value, textArea, e.length + 1);
+      returnToLine(setTextMk, start, end, value, textArea, e.length + 1);
       return;
     }
 
     if (start == end && e == "```") {
       value.splice(start, 0, `${e}\n \n${e}`);
       returnToLine(
-        socket,
+        setTextMk,
         start,
         end,
         value,
@@ -404,14 +331,14 @@ const Tools = ({ textArea, socket }) => {
     if (start !== end) {
       value.splice(start, 0, `${initial}`);
       value.splice(end + 1, 0, `](${link})`);
-      returnToLine(socket, start, end, value, textArea, initial.length);
+      returnToLine(setTextMk, start, end, value, textArea, initial.length);
       return;
     }
 
     if (start == end) {
       value.splice(start, 0, `${initial}${description}](${link})`);
       returnToLine(
-        socket,
+        setTextMk,
         start,
         end,
         value,
@@ -437,6 +364,7 @@ const Tools = ({ textArea, socket }) => {
   const actionOptions = {
     heading: [
       ListType_TYPE_MAIN,
+
       ListType_TYPE_MAIN,
       ListType_TYPE_MAIN,
       ListType_TYPE_MAIN,
@@ -458,7 +386,6 @@ const Tools = ({ textArea, socket }) => {
             titleFunctions={actionTitles[`${item.name}`]}
             options={item.data}
             optionsFunctions={actionOptions[`${item.name}`]}
-            
             iteratorOptionsName={"html"}
             iteratorOptionsValue={"value"}
             propsTitle={item.value}
@@ -468,24 +395,21 @@ const Tools = ({ textArea, socket }) => {
       </div>
     </>
   );
-
-  /* return (
-            <BtnToll
-              key={item.id}
-              link={item.link}
-              value={item.value}
-              data={item.data}
-              actionMain={actionMain[index]}
-              subAction={subAction[index]}
-              indexGlobal={index}
-            />
-          ); */
 };
 
 // elementos ejecutados al presionar algún botón
 
-// codigo para imprimir el texto en el area editable con el puntero en el lugar correcto
-const returnToLine = (socket, start, end, value, e, cantS, cantE, saveInfo) => {
+// código para imprimir el texto en el area editable con el puntero en el lugar correcto
+const returnToLine = (
+  setTextMk,
+  start,
+  end,
+  value,
+  e,
+  cantS,
+  cantE,
+  saveInfo,
+) => {
   cantE = cantE ? cantE : cantS;
   saveInfo = saveInfo != undefined ? saveInfo : true;
   const type = e.target ? "target" : "current";
@@ -498,12 +422,12 @@ const returnToLine = (socket, start, end, value, e, cantS, cantE, saveInfo) => {
   e[`${type}`].selectionEnd = end + cantE;
 
   e[`${type}`].focus();
-  if (saveInfo) configTollsGlobals(e, socket);
+  if (saveInfo) configTollsGlobals(e, setTextMk);
   e[`${type}`].focus();
 };
 
 //guarda todos los valores en la variable global historialArray para su uso en el comando
-const configTollsGlobals = (e, socket) => {
+const configTollsGlobals = (e, setTextMk) => {
   const { array, count } = historial();
 
   let historialCount = count,
@@ -518,8 +442,9 @@ const configTollsGlobals = (e, socket) => {
     }
   }
 
-  resetTimer(socket);
-  socket.emit("set text markdown", e[`${type}`].value);
+  //resetTimer(socket);
+  //socket.emit("set text markdown", e[`${type}`].value);
+  setTextMk(e[`${type}`].value);
   historialArray[historialCount] = e[`${type}`].value;
   localStorage.setItem("textMarkdown", e[`${type}`].value);
   localStorage.setItem("historialArray", JSON.stringify(historialArray));

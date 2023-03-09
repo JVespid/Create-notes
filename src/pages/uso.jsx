@@ -1,5 +1,6 @@
 import React from "react";
 import BtnList from "../../components/notes/btnList";
+import {marked} from "marked";
 const Uso = () => {
   function sas() {
     console.log("hola");
@@ -17,32 +18,7 @@ const Uso = () => {
 
   return (
     <>
-      <BtnList
-        type={"burger"}
-        title={"<img src='https://jvespid.github.io/apis/todoList/img/svg/list.svg' alt='' />"}
-        titleFunctions={sas}
-        options={options}
-        
-        optionsFunctions={optionsFunctions}
-        key={1}
-      />
-      
-      <BtnList
-        type={"burger"}
-        title={"wa ha ha ha"}
-        titleFunctions={sas}
-        options={options}
-        optionsFunctions={optionsFunctions}
-        key={2}
-      />
-      <BtnList
-        type={"arrow"}
-        title={"hola"}
-        titleFunctions={sas}
-        options={options}
-        optionsFunctions={optionsFunctions}
-        key={3}
-      />
+
     </>
   );
 };

@@ -37,7 +37,6 @@ const BtnList = ({
     } else setValidationTitle(true);
 
     if (!isObjectOptions || options.length != optionsFunctions.length) {
-      console.log("entro", options);
       setValidationOptions(false);
     } else setValidationOptions(true);
   };
@@ -91,7 +90,7 @@ const BtnTitle = ({ title, functions, setStateBtn, propsTitle }) => {
     <motion.button
       layout
       className="title-content"
-      whileTap={{ scale: 0.90 }}
+      whileTap={{ scale: 0.9 }}
       whileHover={{ scale: 0.97 }}
       animate={{ scale: 1 }}
       onClick={click}
@@ -192,6 +191,7 @@ const Burger = ({ stateBtn, changeStateBtn }) => {
     <motion.button
       layout
       variants={burger}
+      onBlur={changeStateBtn}
       className="burger-content"
       onClick={changeStateBtn}
       whileTap={{ scale: 0.97 }}
@@ -231,6 +231,7 @@ const Arrow = ({ stateBtn, changeStateBtn }) => {
       variants={arrow}
       className="arrow-content"
       onClick={changeStateBtn}
+      onBlur={changeStateBtn}
       whileTap={{ scale: 0.97 }}
     >
       <motion.div

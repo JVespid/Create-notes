@@ -8,6 +8,9 @@ import useWindowSize from "../../components/hooks/useWindowSize";
 import { io } from "socket.io-client";
 import ToolHtml from "../../components/notes/toolHtml";
 import ToolsViewMid from "../../components/notes/toolsViewMid";
+import { marked } from "marked";
+import sanitizeHtml from "sanitize-html";
+
 let host = "http://localhost:3000";
 /* if (typeof process) {
   host = process.env.host;
@@ -20,22 +23,22 @@ const socket = io(host, {
 //const socket = io();
 
 const Notes = ({ setVisible }) => {
-  const [textHtml, setTextHtml] = React.useState("<h1>Error del servidor</h1>");
+  const [textHtml, setTextHtml] = React.useState("<h1>Error al iniciar</h1>");
   const [textCss, setTextCss] = React.useState(
-    `<style>.content-html1 .body{color: #444;  font-family: Georgia, Palatino, "Palatino Linotype", Times, "Times New Roman", serif;  font-size: 12px;  line-height: 1.5em;  padding: 1em;  margin: 10px; padding:10px;  max-width: 42em;  background: #fefefe;}</style>`,
+    `<style>.content-html1 .body{color: #444;  font-family: Georgia, Palatino, "Palatino Linotype", Times, "Times New Roman", serif;  font-size: 12px;  line-height: 1.5em;  padding: 1em;  margin: 10px; padding:10px;  max-width: 42em; min-height:100%; background: #fefefe;}</style>`,
   );
 
   React.useEffect(() => {
     setVisible(true);
     try {
       socket.connect();
-      socket.on("get text html", html => {
-        setTextHtml(html);
-        localStorage.setItem("HtmlTxt", html);
-      });
       socket.on("get text css", css => {
         setTextCss(css);
         localStorage.setItem("CssTxt", css);
+      });
+      socket.on("get text html", html => {
+        setTextHtml(html);
+        localStorage.setItem("HtmlTxt", html);
       });
     } catch (error) {}
 
@@ -51,14 +54,13 @@ const Notes = ({ setVisible }) => {
     <GlobalState>
       <div className="container-notes">
         <Header />
-        <Main textHtml={textHtml} textCss={textCss} />
+        <Main textHtml={textHtml} setTextHtml={setTextHtml} textCss={textCss} />
       </div>
     </GlobalState>
   );
 };
 
 export default Notes;
-
 
 const Header = () => {
   return (
@@ -68,8 +70,7 @@ const Header = () => {
   );
 };
 
-
-const Main = ({ textHtml, textCss }) => {
+const Main = ({ textHtml, textCss, setTextHtml }) => {
   const refSelect = React.useRef(null);
   const [preValue, setPreValue] = React.useState(
     localStorage.getItem("textMarkdown"),
@@ -78,11 +79,20 @@ const Main = ({ textHtml, textCss }) => {
   const [change, setChange] = React.useState("mid");
   const [widthMidGeneralEdit, setWidthMidGeneralEdit] = React.useState("50%");
   const [widthMidGeneralHtml, setWidthMidGeneralHtml] = React.useState("45%");
+  const [textMk, setTextMk] = React.useState("");
   const { width } = useWindowSize();
 
   React.useEffect(() => {
-    setPreValue(localStorage.getItem("textMarkdown"));
-  }, [localStorage.getItem("textMarkdown")]);
+    setPreValue(localStorage.setItem("textMarkdown", textMk));
+
+    const htmlString = marked(textMk);
+    let htmlClean = cleanHtml(htmlString);
+    htmlClean = htmlClean.split("<a");
+    htmlClean = htmlClean.join("<a target='_blank'");
+    //socket.emit("get text html", `${htmlClean}`);
+
+    setTextHtml(htmlClean);
+  }, [textMk]);
   React.useEffect(() => {
     try {
       setValueCss(refSelect.current.value);
@@ -107,6 +117,7 @@ const Main = ({ textHtml, textCss }) => {
     socket.emit("change css", { type: e.target.value });
   }
 
+  // manejo de la funcionalidad de framer motion
   const actionCssView = action => {
     setChange(action);
   };
@@ -193,6 +204,7 @@ const Main = ({ textHtml, textCss }) => {
             socket={socket}
             preValue={preValue}
             valueCss={valueCss}
+            setTextMk={setTextMk}
             change={change}
           />
         </motion.div>
@@ -223,4 +235,84 @@ const Main = ({ textHtml, textCss }) => {
       </motion.section>
     </main>
   );
+};
+
+// funcion de sanitizacion de codigo html
+const cleanHtml = html => {
+  // Limpiar el código HTML utilizando la función sanitize de la librería
+  const cleanHtml = sanitizeHtml(html, {
+    allowedTags: [
+      "p",
+      "strong",
+      "em",
+      "img",
+      "table",
+      "th",
+      "td",
+      "tr",
+      "ul",
+      "ol",
+      "li",
+      "pre",
+      "code",
+      "blockquote",
+      "a",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "a",
+      "input",
+      "button",
+      "hr",
+      "small",
+      "select",
+      "textarea",
+      "option",
+      "label",
+      "sup",
+      "span",
+      "br",
+      "div",
+    ],
+    // Permitir solo el atributo "class" en las etiquetas <p> y <strong>
+    allowedAttributes: {
+      p: ["class", "style"],
+      strong: ["class", "style"],
+      em: ["class", "style"],
+      img: ["class", "style", "src", "alt"],
+      table: ["class", "style"],
+      th: ["class", "style"],
+      td: ["class", "style"],
+      tr: ["class", "style"],
+      ul: ["class", "style"],
+      ol: ["class", "style"],
+      li: ["class", "style"],
+      pre: ["class", "style"],
+      code: ["class", "style"],
+      blockquote: ["class", "style"],
+      a: ["class", "style", "href", "target"],
+      h1: ["class", "style"],
+      h2: ["class", "style"],
+      h3: ["class", "style"],
+      h4: ["class", "style"],
+      h5: ["class", "style"],
+      h6: ["class", "style"],
+      input: ["class", "style", "type", "name", "value", "checked"],
+      button: ["class", "style", "type", "name", "value"],
+      hr: ["class", "style"],
+      small: ["class", "style"],
+      select: ["class", "style", "name", "value"],
+      textarea: ["class", "style", "name", "value"],
+      option: ["class", "style", "value"],
+      label: ["class", "style", "for"],
+      sup: ["class", "style"],
+      span: ["class", "style"],
+      div: ["class", "style"],
+    },
+  });
+
+  return cleanHtml;
 };

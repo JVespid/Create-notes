@@ -42,6 +42,7 @@ io.on("connection", socket => {
       const TextHTML = fs.readFileSync(
         path.join(__dirname, "assets", "html-default.txt"),
         "utf8",
+        
       );
       const TextMK = fs.readFileSync(
         path.join(__dirname, "assets", "markdown-default.txt"),
